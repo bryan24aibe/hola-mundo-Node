@@ -1,4 +1,4 @@
-name: Deploy QA
+name: QA Build and Push
 
 on:
   push:
@@ -10,22 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout código
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Configurar Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Instalar dependencias
-      run: npm install
+      - name: Build Docker image
+        run: docker build -t balarai/hola-mundo-api:qa .
 
-    - name: Ejecutar pruebas (si las hubiera)
-      run: echo "No hay pruebas aún"
+      - name: Push Docker image to Docker Hub
+        run: docker push balarai/hola-mundo-api:qa
 
-    - name: Construir y subir imagen Docker
-      run: |
-        docker build -t balarai/hola-mundo-api:qa .
-        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        docker push balarai/hola-mundo-api:qa
