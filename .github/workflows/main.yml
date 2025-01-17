@@ -1,0 +1,118 @@
+name: Deploy to Production
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/hola-mundo-api:qa .
+
+      - name: Push Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/hola-mundo-api:qa
+
+  deploy-to-ec2-instance1:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Docker Image to EC2 Instance 1
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.EC2_MAIN_1 }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY_2 }}
+          script: |
+            # Actualizar paquetes
+            sudo yum update -y
+            # Instalar Docker si no está instalado
+            sudo amazon-linux-extras enable docker
+            sudo yum install -y docker
+            sudo service docker start
+            # Descargar e iniciar la imagen desde Docker Hub
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hola-mundo-api:prod
+            sudo docker stop hola-mundo-api-container || true
+            sudo docker rm hola-mundo-api-container || true
+            sudo docker run -d --name hola-mundo-api-container -p 80:80 ${{ secrets.DOCKER_USERNAME }}/hola-mundo-api:prod
+
+  deploy-to-ec2-instance2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Docker Image to EC2 Instance 2
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.EC2_MAIN_2 }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY_2 }}
+          script: |
+            # Actualizar paquetes
+            sudo yum update -y
+            # Instalar Docker si no está instalado
+            sudo amazon-linux-extras enable docker
+            sudo yum install -y docker
+            sudo service docker start
+            # Descargar e iniciar la imagen desde Docker Hub
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hola-mundo-api:prod
+            sudo docker stop hola-mundo-api-container || true
+            sudo docker rm hola-mundo-api-container || true
+            sudo docker run -d --name hola-mundo-api-container -p 80:80 ${{ secrets.DOCKER_USERNAME }}/hola-mundo-api:prod
+
+  deploy-to-ec2-instance3:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Docker Image to EC2 Instance 3
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.EC2_MAIN_3 }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY_2 }}
+          script: |
+            # Actualizar paquetes
+            sudo yum update -y
+            # Instalar Docker si no está instalado
+            sudo amazon-linux-extras enable docker
+            sudo yum install -y docker
+            sudo service docker start
+            # Descargar e iniciar la imagen desde Docker Hub
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hola-mundo-api:prod
+            sudo docker stop hola-mundo-api-container || true
+            sudo docker rm hola-mundo-api-container || true
+            sudo docker run -d --name hola-mundo-api-container -p 80:80 ${{ secrets.DOCKER_USERNAME }}/hola-mundo-api:prod
+
+  deploy-to-ec2-instance4:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Docker Image to EC2 Instance 4
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.EC2_MAIN_4 }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY_2 }}
+          script: |
+            # Actualizar paquetes
+            sudo yum update -y
+            # Instalar Docker si no está instalado
+            sudo amazon-linux-extras enable docker
+            sudo yum install -y docker
+            sudo service docker start
+            # Descargar e iniciar la imagen desde Docker Hub
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hola-mundo-api:prod
+            sudo docker stop hola-mundo-api-container || true
+            sudo docker rm hola-mundo-api-container || true
+            sudo docker run -d --name hola-mundo-api-container -p 80:80 ${{ secrets.DOCKER_USERNAME }}/hola-mundo-api:prod
