@@ -33,7 +33,7 @@ jobs:
       - name: Deploy Docker Image to EC2 Instance 1
         uses: appleboy/ssh-action@v0.1.8
         with:
-          host: ${{ secrets.EC2_INSTANCE1_PUBLIC_IP }}
+          host: ${{ secrets.EC2_HOST_1QA }}
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
@@ -57,7 +57,7 @@ jobs:
       - name: Deploy Docker Image to EC2 Instance 2
         uses: appleboy/ssh-action@v0.1.8
         with:
-          host: ${{ secrets.EC2_INSTANCE2_PUBLIC_IP }}
+          host: ${{ secrets.EC2_HOST_2QA }}
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
